@@ -24,26 +24,32 @@ module.exports={
         await User.findById(userId)
         .then((e)=>{
             
-            const newExercise= new Exercise({username:e.username,description,duration,date:date||new Date()})
+            const newExercise= new Exercise({userId:e._id,description,duration,date:date||new Date()})
             newExercise.save((err,id)=>{
                 console.log(err,id)
-                res.json({username:e.username,duration,description,date:date||new Date()})
+                res.send({_id:e._id,username:e.username,duration:parseInt(id.duration),description,date:id.date.toDateString()})
             })
         })        
     },
-    getLog: async(req,res)=>{        
+    getLog: async(req,res)=>{   
+      console.log(req.query)     
         const {userId,from,to,limit}=req.query
         let count=0        
         await User.findById(userId)
         .then(async e=> {
-            let exercises= await Exercise.find({username:e.username})
-            let logs=exercises.map(e=>({description:e.description,duration:e.duration,date:e.date.toUTCString()}))
-            console.log('ex',logs)
+            console.log(e)
+            let exercises= await Exercise.find({userId})
+            console.log(exercises)
+            if(limit){
+              exercises=exercises.splice(0,limit)
+            }
+            let log=exercises.map(el=>({description:el.description,duration:el.duration,date:el.date.toDateString()}))
+            console.log('ex',log)
             let result={
                 _id:e._id,
                 username:e.username,
-                count:logs.length,
-                logs:logs
+                count:log.length,
+                log,
             }
             res.json(result)
         })

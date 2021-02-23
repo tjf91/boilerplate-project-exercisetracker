@@ -2,10 +2,10 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const exerciseSchema= new Schema ({
-    user: {type: String, required:true},
+    userId: {type: String, required:true},
     description: {type:String, required:true},
     duration:{type:Number,required:true},
-    date:{type:Date,default: new Date()}
+    date:{type:Date,default: new Date().toDateString()}
 })
 
 const Exercise = mongoose.model('Exercise', exerciseSchema)
