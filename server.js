@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 app.post('/api/exercise/new-user', controller.addUser)
 app.get('/api/exercise/users', controller.getUsers)
 app.post('/api/exercise/add', controller.addExercise)
-app.get('/api/exercose/log?userId', controller.getLog)
+app.get('/api/exercise/log', controller.getLog)
 
 
 

@@ -4,11 +4,11 @@ const Exercise= require('./exercise.model')
 
 module.exports={
     addUser: async(req,res)=>{
-       console.log(req.body)
+      
        const {username}=req.body
        const newUser = new User({username})
        newUser.save((err,id)=>{
-           console.log(id)
+           
            res.json({username,_id:id._id})
        })
        
@@ -21,20 +21,35 @@ module.exports={
     },
     addExercise: async(req,res)=>{
         const {userId,description,duration,date}=req.body
-        await User.findOne({_id:userId})
+        await User.findById(userId)
         .then((e)=>{
-            console.log(e)
-            const newExercise= new Exercise({_id:userId,description,duration,date})
+            
+            const newExercise= new Exercise({username:e.username,description,duration,date:date||new Date()})
             newExercise.save((err,id)=>{
                 console.log(err,id)
-                res.json({_id:userId,username:e.username,duration,description,date})
+                res.json({username:e.username,duration,description,date:date||new Date()})
             })
         })        
     },
-    getLog: async(req,res)=>{
-        console.log(req.params)
-        console.log(req.query)
-        await Exercise.findOne({_id:userId})
+    getLog: async(req,res)=>{        
+        const {userId,from,to,limit}=req.query
+        let count=0        
+        await User.findById(userId)
+        .then(async e=> {
+            let exercises= await Exercise.find({username:e.username})
+            let logs=exercises.map(e=>({description:e.description,duration:e.duration,date:e.date.toUTCString()}))
+            console.log('ex',logs)
+            let result={
+                _id:e._id,
+                username:e.username,
+                count:logs.length,
+                logs:logs
+            }
+            res.json(result)
+        })
+        
+        
+        
     }
 
 }
